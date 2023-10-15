@@ -1,8 +1,7 @@
 #!/usr/bin/python3
 """ A Module that implements a custom console for the AirBnB clone"""
 import cmd
-from turtle import Turtle  # Placeholder to help me test
-from random import randint
+from models.base_model import BaseModel
 from re import findall
 
 
@@ -23,7 +22,7 @@ class HBNBCommand(cmd.Cmd):
         Returns:
             list: List of commands
         """
-        words = findall(r'\w+|\"[^\"]*\"', line)
+        words = findall(r'"[^"]*"|\S+', line)
         # Remove the quotes from quoted words
         words = [word.strip('"') for word in words]
         return words
@@ -37,9 +36,7 @@ class HBNBCommand(cmd.Cmd):
             commands = type(self).split_string_with_quotes(line)
 
             if commands[0] == "BaseModel":
-                instance = Turtle()  # Template class, would be replaced
-                instance.id = str(randint(0, 100))  # To avoid errors
-                # would be removed
+                instance = BaseModel()  # Template class, would be replaced
 
                 type(self).instances[instance.id] = instance
                 # Save to a Json file (call function)
@@ -62,7 +59,7 @@ class HBNBCommand(cmd.Cmd):
                 if len(commands) > 1:
                     try:
                         # Don't forget to change doc to string rep
-                        print(type(self).instances[commands[1]].__doc__)
+                        print(type(self).instances[commands[1]])
                     except KeyError:
                         print("** no instance found **")
                 else:
