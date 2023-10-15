@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 """ A Module that implements a custom console for the AirBnB clone"""
 import cmd
-from turtle import Turtle  # Placeholder to help me test
-from random import randint
+from models.base_model import BaseModel
+from models import storage
 from re import findall
 
 
@@ -11,7 +11,6 @@ class HBNBCommand(cmd.Cmd):
     clone.
     """
     prompt = "(hbnb) "
-    instances = {}
 
     @staticmethod
     def split_string_with_quotes(line=""):
@@ -23,7 +22,7 @@ class HBNBCommand(cmd.Cmd):
         Returns:
             list: List of commands
         """
-        words = findall(r'\w+|\"[^\"]*\"', line)
+        words = findall(r'"[^"]*"|\S+', line)
         # Remove the quotes from quoted words
         words = [word.strip('"') for word in words]
         return words
@@ -37,12 +36,7 @@ class HBNBCommand(cmd.Cmd):
             commands = type(self).split_string_with_quotes(line)
 
             if commands[0] == "BaseModel":
-                instance = Turtle()  # Template class, would be replaced
-                instance.id = str(randint(0, 100))  # To avoid errors
-                # would be removed
-
-                type(self).instances[instance.id] = instance
-                # Save to a Json file (call function)
+                instance = BaseModel()
                 print(instance.id)
             else:
                 print("** class doesn't exist **")
@@ -61,8 +55,9 @@ class HBNBCommand(cmd.Cmd):
             if commands[0] == "BaseModel":
                 if len(commands) > 1:
                     try:
-                        # Don't forget to change doc to string rep
-                        print(type(self).instances[commands[1]].__doc__)
+                        instances = storage.all()
+                        key = "{}.{}".format(commands[0], commands[1])
+                        print(instances[key])
                     except KeyError:
                         print("** no instance found **")
                 else:
@@ -84,8 +79,9 @@ class HBNBCommand(cmd.Cmd):
             if commands[0] == "BaseModel":
                 if len(commands) > 1:
                     try:
-                        # Don't forget to change instances to the loaded value
-                        del type(self).instances[commands[1]]
+                        instances = storage.all()
+                        key = "{}.{}".format(commands[0], commands[1])
+                        del instances[key]
                     except KeyError:
                         print("** no instance found **")
                 else:
@@ -100,16 +96,23 @@ class HBNBCommand(cmd.Cmd):
         the class name.
         Ex: all BaseModel or all
         """
+        instances = storage.all()
+        list_all = []
         if line:
             # create a list of commands
             commands = type(self).split_string_with_quotes(line)
 
             if commands[0] == "BaseModel":
-                print(type(self).instances)  # a simpler approach, needs work
+                for key, value in instances.items():
+                    if commands[0] in key:
+                        list_all.append(str(value))
+                print(list_all)
             else:
                 print("** class doesn't exist **")
         else:
-            print(type(self).instances)  # A simpler approach, needs work
+            for value in instances.values():
+                list_all.append(str(value))
+            print(list_all)
 
     def do_update(self, line):
         """Updates an instance based on the class name and id by adding or
@@ -123,9 +126,9 @@ class HBNBCommand(cmd.Cmd):
             if commands[0] == "BaseModel":
                 if len(commands) > 1:
                     try:
-                        # Don't forget to change `instances` to loaded value
-                        base_id = commands[1]
-                        instance = type(self).instances[base_id]
+                        instances = storage.all()
+                        key = "{}.{}".format(commands[0], commands[1])
+                        instance = instances[key]
                     except KeyError:
                         print("** no instance found **")
                     else:
@@ -133,13 +136,15 @@ class HBNBCommand(cmd.Cmd):
                         try:
                             attr_name = commands[2]
                             try:
+                                attr_value = commands[3]
                                 # Get the type of the existing attribute value
                                 inst_type = type(getattr(instance, attr_name))
                                 # Cast the attribute value to existing type
-                                attr_value = commands[3]
                                 casted_value = inst_type(attr_value)
-                            except (IndexError, AttributeError):
+                            except IndexError:
                                 print("** value missing **")
+                            except AttributeError:
+                                setattr(instance, attr_name, attr_value)
                             else:
                                 # Set the attribute value
                                 setattr(instance, attr_name, casted_value)
