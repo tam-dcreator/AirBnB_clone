@@ -2,6 +2,12 @@
 """ A Module that implements a custom console for the AirBnB clone"""
 import cmd
 from models.base_model import BaseModel
+from models.user import User
+from models.state import State
+from models.city import City
+from models.place import Place
+from models.amenity import Amenity
+from models.review import Review
 from models import storage
 from re import findall
 
@@ -11,6 +17,11 @@ class HBNBCommand(cmd.Cmd):
     clone.
     """
     prompt = "(hbnb) "
+    class_map = {
+        "BaseModel": BaseModel, "User": User, "Place": Place,
+        "State": State, "City": City, "Amenity": Amenity,
+        "Review": Review
+    }
 
     @staticmethod
     def split_string_with_quotes(line=""):
@@ -35,8 +46,8 @@ class HBNBCommand(cmd.Cmd):
             # create a list of commands
             commands = type(self).split_string_with_quotes(line)
 
-            if commands[0] == "BaseModel":
-                instance = BaseModel()
+            if commands[0] in type(self).class_map:
+                instance = type(self).class_map[commands[0]]()
                 print(instance.id)
             else:
                 print("** class doesn't exist **")
@@ -52,7 +63,7 @@ class HBNBCommand(cmd.Cmd):
             # create a list of commands
             commands = type(self).split_string_with_quotes(line)
 
-            if commands[0] == "BaseModel":
+            if commands[0] in type(self).class_map:
                 if len(commands) > 1:
                     try:
                         instances = storage.all()
@@ -76,7 +87,7 @@ class HBNBCommand(cmd.Cmd):
             # create a list of commands
             commands = type(self).split_string_with_quotes(line)
 
-            if commands[0] == "BaseModel":
+            if commands[0] in type(self).class_map:
                 if len(commands) > 1:
                     try:
                         instances = storage.all()
@@ -102,7 +113,7 @@ class HBNBCommand(cmd.Cmd):
             # create a list of commands
             commands = type(self).split_string_with_quotes(line)
 
-            if commands[0] == "BaseModel":
+            if commands[0] in type(self).class_map:
                 for key, value in instances.items():
                     if commands[0] in key:
                         list_all.append(str(value))
@@ -123,7 +134,7 @@ class HBNBCommand(cmd.Cmd):
             # create a list of commands
             commands = type(self).split_string_with_quotes(line)
 
-            if commands[0] == "BaseModel":
+            if commands[0] in type(self).class_map:
                 if len(commands) > 1:
                     try:
                         instances = storage.all()
