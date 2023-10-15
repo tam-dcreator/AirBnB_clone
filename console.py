@@ -49,6 +49,7 @@ class HBNBCommand(cmd.Cmd):
             if commands[0] in type(self).class_map:
                 instance = type(self).class_map[commands[0]]()
                 print(instance.id)
+                storage.save()
             else:
                 print("** class doesn't exist **")
         else:
@@ -93,6 +94,7 @@ class HBNBCommand(cmd.Cmd):
                         instances = storage.all()
                         key = "{}.{}".format(commands[0], commands[1])
                         del instances[key]
+                        storage.save()
                     except KeyError:
                         print("** no instance found **")
                 else:
@@ -156,9 +158,11 @@ class HBNBCommand(cmd.Cmd):
                                 print("** value missing **")
                             except AttributeError:
                                 setattr(instance, attr_name, attr_value)
+                                storage.save()
                             else:
                                 # Set the attribute value
                                 setattr(instance, attr_name, casted_value)
+                                storage.save()
                         except IndexError:
                             print("** attribute name missing **")
                 else:
