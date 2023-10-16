@@ -182,6 +182,12 @@ class HBNBCommand(cmd.Cmd):
         """
         exit(0)
 
+    def emptyline(self):
+        """Overwrites the default action when an empty line is inputted
+        It just ignores the empty line or empty line and space
+        """
+        pass
+
     def postloop(self):
         """Prints an empty line when the program ends, for a nicer format
         """
