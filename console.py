@@ -73,7 +73,7 @@ class HBNBCommand(cmd.Cmd):
                     except KeyError:
                         print("** no instance found **")
                 else:
-                    print("** instance id missing ** ")
+                    print("** instance id missing **")
             else:
                 print("** class doesn't exist **")
         else:
@@ -98,7 +98,7 @@ class HBNBCommand(cmd.Cmd):
                     except KeyError:
                         print("** no instance found **")
                 else:
-                    print("** instance id missing ** ")
+                    print("** instance id missing **")
             else:
                 print("** class doesn't exist **")
         else:
@@ -166,7 +166,7 @@ class HBNBCommand(cmd.Cmd):
                         except IndexError:
                             print("** attribute name missing **")
                 else:
-                    print("** instance id missing ** ")
+                    print("** instance id missing **")
             else:
                 print("** class doesn't exist **")
         else:
